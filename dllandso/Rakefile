@@ -1,0 +1,33 @@
+#for linux
+file "sum.so" => "sum.cpp" do |t|
+  sh "g++ --shared -o sum.so sum.cpp"
+end
+#dynamic
+task :lin_dl => ["dl.cpp", "sum.so"] do |t|
+  sh "g++ -o lin_dl.out dl.cpp -ldl"
+  sh "./lin_dl.out"
+end
+#static
+task :lin_st => ["st.cpp", "sum.so"] do |t|
+  sh "g++ -o lin_st.out st.cpp sum.so"
+  sh "./lin_st.out"
+end
+
+#for windows
+file "sum.dll" => "sum.cpp" do
+  sh "cl /nologo /LD sum.cpp"
+end
+#dynamic
+task :win_dl => ["dl.cpp", "sum.dll"] do
+  sh "cl /nologo dl.cpp -Fewin_dl.exe"
+  sh "./win_dl.exe"
+end
+#static
+task :win_st => ["st.cpp", "sum.dll"] do
+  sh "cl /nologo st.cpp sum.lib -Fewin_st.exe"
+  sh "./win_st.exe"
+end
+
+task :clean do
+  sh "rm -f *.so *.o a *.exe *.obj *.dll *.out *.lib *.def *.exp"
+end
